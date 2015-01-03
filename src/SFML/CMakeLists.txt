@@ -5,9 +5,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/Macros.cmake)
 # add the CSFML sources path
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-# define the path of our additional CMake modules
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-
 # set the output directory for CSFML libraries
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 
@@ -15,16 +12,18 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 add_definitions(-DCSFML_EXPORTS)
 
 # disable stupid warnings with Visual C++
-if(COMPILER_MSVC)
+if(SFML_COMPILER_MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 # find SFML libraries (C++)
-if(WINDOWS)
-    set(SFML_STATIC_LIBRARIES TRUE)
-    add_definitions(-DSFML_STATIC)
+if(SFML_OS_WINDOWS)
+    if (CSFML_LINK_SFML_STATICALLY)
+        set(SFML_STATIC_LIBRARIES TRUE)
+        add_definitions(-DSFML_STATIC)
+    endif()
 endif()
-find_package(SFML 2.0 COMPONENTS system window network graphics audio REQUIRED)
+find_package(SFML 2 COMPONENTS system window network graphics audio REQUIRED)
 include_directories(${SFML_INCLUDE_DIR})
 
 # add the modules subdirectories
@@ -33,6 +32,6 @@ add_subdirectory(Window)
 add_subdirectory(Network)
 add_subdirectory(Graphics)
 add_subdirectory(Audio)
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     add_subdirectory(Main)
 endif()
